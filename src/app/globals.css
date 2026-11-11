@@ -3,25 +3,111 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #ffffff;
+  /* 옥색 → 청록 → 하늘색 */
+  --bg-gradient: linear-gradient(135deg, #2dd4bf 0%, #06b6d4 45%, #0ea5e9 75%, #3b82f6 100%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg-gradient: linear-gradient(135deg, #0f766e 0%, #0e7490 45%, #0369a1 75%, #1e3a8a 100%);
   }
 }
 
 body {
+  min-height: 100vh;
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* 배경에 은은하게 떠 있는 빛 덩어리 — 유리 효과가 잘 보이도록 */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+body::before {
+  top: -10%;
+  left: -15%;
+  width: 60vmax;
+  height: 60vmax;
+  background: #5eead4;
+}
+body::after {
+  bottom: -15%;
+  right: -15%;
+  width: 55vmax;
+  height: 55vmax;
+  background: #7dd3fc;
+}
+
+/* ===== 링크 카드 호버 효과 ===== */
+
+/* 흐르는 무지갯빛 테두리: mask로 테두리만 남김 */
+.link-card-glow {
+  padding: 2px;
+  background: linear-gradient(90deg, #5eead4, #38bdf8, #a78bfa, #f0abfc, #5eead4);
+  background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.link-card:hover .link-card-glow {
+  animation: glow-flow 2s linear infinite;
+}
+
+/* 카드를 가로지르는 빛줄기 */
+.link-card:hover .link-card-shine {
+  animation: shine-sweep 0.9s ease-out;
+}
+
+/* 이모지 통통 튀기 */
+.link-card:hover .link-card-emoji {
+  animation: emoji-bounce 0.8s ease-in-out infinite;
+}
+
+@keyframes glow-flow {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+@keyframes shine-sweep {
+  0% {
+    left: -50%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    left: 130%;
+    opacity: 0;
+  }
+}
+
+@keyframes emoji-bounce {
+  0%,
+  100% {
+    transform: rotate(20deg) scale(1.25) translateY(0);
+  }
+  50% {
+    transform: rotate(-12deg) scale(1.35) translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-card:hover .link-card-glow,
+  .link-card:hover .link-card-shine,
+  .link-card:hover .link-card-emoji {
+    animation: none;
   }
 }
